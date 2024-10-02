@@ -92,7 +92,9 @@ public class As400ConnectorTask extends BaseSourceTask<As400Partition, As400Offs
 
         Offsets<As400Partition, As400OffsetContext> previousOffsetPartition = getPreviousOffsets(
                 new As400Partition.Provider(connectorConfig), new As400OffsetContext.Loader(connectorConfig));
+        LOGGER.info("Previous offset partition: {}", previousOffsetPartition);
         As400OffsetContext previousOffset = previousOffsetPartition.getTheOnlyOffset();
+        LOGGER.info("Previous offset: {}", previousOffset);
         if (previousOffset == null) {
             LOGGER.info("previous offsets not found creating from config");
             previousOffset = new As400OffsetContext(connectorConfig);

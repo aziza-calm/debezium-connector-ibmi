@@ -57,6 +57,8 @@ public class As400OffsetContext implements OffsetContext {
         this.position = connectorConfig.getOffset();
         this.connectorConfig = connectorConfig;
         sourceInfo = new SourceInfo(connectorConfig);
+        sourceInfo.setJournalReceiver(position.getReceiver().library() + "." + position.getReceiver().name());
+        sourceInfo.setEventSequence(position.getOffset().longValue());
         inclueTables = connectorConfig.tableIncludeList();
     }
 
@@ -66,6 +68,8 @@ public class As400OffsetContext implements OffsetContext {
         this.position = position;
         this.connectorConfig = connectorConfig;
         sourceInfo = new SourceInfo(connectorConfig);
+        sourceInfo.setJournalReceiver(position.getReceiver().library() + "." + position.getReceiver().name());
+        sourceInfo.setEventSequence(position.getOffset().longValue());
         inclueTables = connectorConfig.tableIncludeList();
     }
 
@@ -76,6 +80,8 @@ public class As400OffsetContext implements OffsetContext {
         this.position = position;
         this.connectorConfig = connectorConfig;
         sourceInfo = new SourceInfo(connectorConfig);
+        sourceInfo.setJournalReceiver(position.getReceiver().library() + "." + position.getReceiver().name());
+        sourceInfo.setEventSequence(position.getOffset().longValue());
         this.inclueTables = includeTables;
         this.snapshotComplete = snapshotComplete;
     }

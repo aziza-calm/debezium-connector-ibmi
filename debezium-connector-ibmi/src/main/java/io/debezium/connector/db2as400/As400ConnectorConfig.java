@@ -12,6 +12,8 @@ import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.common.config.ConfigDef.Type;
 import org.apache.kafka.common.config.ConfigDef.Width;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
@@ -30,6 +32,8 @@ import io.debezium.relational.Tables.TableFilter;
 
 //TODO  can we deliver HistorizedRelationalDatabaseConnectorConfig or should it be RelationalDatabaseConnectorConfig
 public class As400ConnectorConfig extends RelationalDatabaseConnectorConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(As400ConnectorConfig.class);
     private static TableIdToStringMapper tableToString = x -> {
         final StringBuilder sb = new StringBuilder(x.schema());
         sb.append(".").append(x.table());
@@ -106,6 +110,8 @@ public class As400ConnectorConfig extends RelationalDatabaseConnectorConfig {
         super(config, new SystemTablesPredicate(),
                 tableToString, 1, ColumnFilterMode.SCHEMA, false);
         this.config = config;
+        log.info("Snapshot mode string: {}", SNAPSHOT_MODE);
+        log.info("Snapshot mode in constructor: {}", config.getString(SNAPSHOT_MODE));
         this.snapshotMode = SnapshotMode.parse(config.getString(SNAPSHOT_MODE), SNAPSHOT_MODE.defaultValueAsString());
         this.tableFilters = new As400NormalRelationalTableFilters(config, new SystemTablesPredicate(), tableToString);
     }
@@ -183,6 +189,10 @@ public class As400ConnectorConfig extends RelationalDatabaseConnectorConfig {
         final Long configTime = config.getLong(As400OffsetContext.EVENT_TIME);
         final Instant time = (configTime == null) ? Instant.ofEpochSecond(0) : Instant.ofEpochSecond(configTime);
         return new JournalProcessedPosition(offset, receiver, lib, time, (processed == null) ? false : processed);
+    }
+
+    public String getDatabaseName() {
+        return config.getString(As400ConnectorConfig.DATABASE_NAME);
     }
 
     private static class SystemTablesPredicate implements TableFilter {
@@ -294,6 +304,7 @@ public class As400ConnectorConfig extends RelationalDatabaseConnectorConfig {
          * @return the matching option, or null if no match is found
          */
         public static SnapshotMode parse(String value) {
+            log.info("SnapshotMode parse value: {}", value);
             if (value == null) {
                 return null;
             }
@@ -316,6 +327,7 @@ public class As400ConnectorConfig extends RelationalDatabaseConnectorConfig {
          */
         public static SnapshotMode parse(String value, String defaultValue) {
             SnapshotMode mode = parse(value);
+            log.info("Snapshot mode after parse: {}", mode);
             if (mode == null && defaultValue != null) {
                 mode = parse(defaultValue);
             }
