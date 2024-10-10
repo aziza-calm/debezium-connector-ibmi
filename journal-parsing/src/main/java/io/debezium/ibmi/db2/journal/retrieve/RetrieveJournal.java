@@ -83,7 +83,6 @@ public class RetrieveJournal {
     public boolean retrieveJournal(JournalProcessedPosition previousPosition) throws Exception {
 
         final PositionRange range = journalReceivers.findRange(config.as400().connection(), previousPosition);
-
         return retrieveJournal(previousPosition, range);
     }
 
@@ -112,9 +111,9 @@ public class RetrieveJournal {
         builder.init();
         builder.withBufferLenth(config.journalBufferSize());
         builder.withJournalEntryType(JournalEntryType.ALL);
-        if (config.filtering() && !config.includeFiles().isEmpty()) {
-            builder.withFileFilters(config.includeFiles());
-        }
+        // if (config.filtering() && !config.includeFiles().isEmpty()) {
+        // builder.withFileFilters(config.includeFiles());
+        // }
         builder.withRange(range);
         final ProgramParameter[] parameters = builder.build();
 
